@@ -23,6 +23,12 @@ const partners = [
     width: 148,
     height: 49,
   },
+  {
+    name: "Spintly",
+    src: "/partners/spintly.png",
+    width: 160,
+    height: 76,
+  },
 ] as const;
 
 function subscribeReducedMotion(onStoreChange: () => void) {

@@ -8,7 +8,7 @@ const modules = [
   { label: "Architecture", href: "#workflow" },
 ];
 
-const partners = ["Honeywell", "Suprema", "Spectra"];
+const partners = ["Honeywell", "Suprema", "Spectra", "Spintly"];
 
 export function Footer() {
   return (

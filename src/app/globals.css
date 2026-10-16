@@ -46,6 +46,23 @@
   --color-cobalt: var(--cobalt);
   --color-cobalt-bright: var(--cobalt-bright);
   --color-surface: var(--surface);
+  --color-vt-bg: var(--vt-bg);
+  --color-vt-ink: var(--vt-ink);
+  --color-vt-body: var(--vt-body);
+  --color-vt-muted: var(--vt-muted);
+  --color-vt-card: var(--vt-card);
+  --color-vt-card-soft: var(--vt-card-soft);
+  --color-vt-border: var(--vt-border);
+  --color-vt-ext: var(--vt-ext);
+  --color-vt-ext-soft: var(--vt-ext-soft);
+  --color-vt-int: var(--vt-int);
+  --color-vt-int-soft: var(--vt-int-soft);
+  --color-vt-deny: var(--vt-deny);
+  --color-vt-deny-soft: var(--vt-deny-soft);
+  --color-vt-soon: var(--vt-soon);
+  --color-vt-soon-soft: var(--vt-soon-soft);
+  --color-vt-on-accent: var(--vt-on-accent);
+  --color-vt-eyebrow: var(--vt-eyebrow);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -96,6 +113,53 @@
   --sidebar-accent-foreground: #0a0f1c;
   --sidebar-border: #d0d7e4;
   --sidebar-ring: #2563eb;
+}
+
+/*
+ * Visit types section — scoped tokens with light + dark values.
+ * Accent per visit type: teal = External, indigo = Internal. All text
+ * tokens meet 4.5:1 against their card surface in both themes.
+ * Dark mode follows the project's `.dark` variant (or data-theme="dark").
+ */
+.visit-types {
+  --vt-bg: transparent;
+  --vt-ink: #0a0f1c;
+  --vt-body: #475569;
+  --vt-muted: #5b657a;
+  --vt-card: rgb(255 255 255 / 0.88);
+  --vt-card-soft: rgb(255 255 255 / 0.62);
+  --vt-border: rgb(15 23 42 / 0.1);
+  --vt-ext: #0f766e;
+  --vt-ext-soft: rgb(13 148 136 / 0.1);
+  --vt-int: #4f46e5;
+  --vt-int-soft: rgb(79 70 229 / 0.1);
+  --vt-deny: #be123c;
+  --vt-deny-soft: rgb(225 29 72 / 0.08);
+  --vt-soon: #92400e;
+  --vt-soon-soft: rgb(245 158 11 / 0.14);
+  --vt-on-accent: #ffffff;
+  --vt-eyebrow: #2563eb;
+}
+
+.dark .visit-types,
+[data-theme="dark"] .visit-types {
+  --vt-bg: #070b14;
+  --vt-ink: #f1f5f9;
+  --vt-body: #cbd5e1;
+  --vt-muted: #a3aec2;
+  --vt-card: rgb(15 23 42 / 0.92);
+  --vt-card-soft: rgb(15 23 42 / 0.6);
+  --vt-border: rgb(148 163 184 / 0.18);
+  --vt-ext: #5eead4;
+  --vt-ext-soft: rgb(45 212 191 / 0.12);
+  --vt-int: #a5b4fc;
+  --vt-int-soft: rgb(129 140 248 / 0.14);
+  --vt-deny: #fda4af;
+  --vt-deny-soft: rgb(251 113 133 / 0.12);
+  --vt-soon: #fcd34d;
+  --vt-soon-soft: rgb(245 158 11 / 0.16);
+  --vt-on-accent: #04111a;
+  --vt-eyebrow: #93c5fd;
 }
 
 @layer base {

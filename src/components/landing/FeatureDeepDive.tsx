@@ -21,6 +21,7 @@ import {
   Users,
 } from "lucide-react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { VisitTypes } from "@/components/landing/VisitTypes";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -320,6 +321,9 @@ export function FeatureDeepDive() {
           })}
         </div>
       </div>
+
+      {/* Visit types — External vs Internal */}
+      <VisitTypes />
 
       {/* Access */}
       <div id="access" className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">

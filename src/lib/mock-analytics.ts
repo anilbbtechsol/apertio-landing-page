@@ -26,34 +26,3 @@ export const attendanceSeries = Array.from({ length: 7 }, (_, i) => {
 export const kpiSparkVisitors = [132, 148, 141, 162, 155, 178, 188];
 export const kpiSparkShowRate = [86, 88, 87, 90, 89, 92, 91];
 export const kpiSparkPresence = [64, 71, 68, 74, 72, 70, 76];
-
-export const liveDeskRows = [
-  {
-    id: "V-2041",
-    name: "Ananya Mehta",
-    host: "Dr. Rao",
-    status: "Expected",
-    door: "Gate A",
-  },
-  {
-    id: "V-2042",
-    name: "James Okonkwo",
-    host: "Facilities",
-    status: "Inside",
-    door: "Lobby 2",
-  },
-  {
-    id: "V-2043",
-    name: "Priya Nair",
-    host: "CS Dept",
-    status: "Approved",
-    door: "Block B",
-  },
-  {
-    id: "V-2044",
-    name: "Chen Wei",
-    host: "HR",
-    status: "Overdue",
-    door: "Gate B",
-  },
-] as const;

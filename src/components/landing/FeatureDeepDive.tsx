@@ -21,7 +21,10 @@ import {
   Users,
 } from "lucide-react";
 import { prefersReducedMotion } from "@/lib/motion";
+import { AdminDashboard } from "@/components/landing/AdminDashboard";
+import { SmartRoomBooking } from "@/components/landing/SmartRoomBooking";
 import { VisitTypes } from "@/components/landing/VisitTypes";
+import { WaypointSystem } from "@/components/landing/WaypointSystem";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -240,11 +243,12 @@ export function FeatureDeepDive() {
           />
         </div>
 
-        <div className="feature-reveal mt-10 grid gap-4 sm:grid-cols-3">
+        <div className="feature-reveal mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: QrCode, label: "Visit & Host", hint: "Guests → passes → desks", href: "#visit" },
             { icon: DoorOpen, label: "Access & Space", hint: "Rooms → profiles → ACS", href: "#access" },
             { icon: Timer, label: "Time & People", hint: "Punches → rules → export", href: "#time" },
+            { icon: ShieldAlert, label: "Risk & Ops", hint: "Watchlists → desks → exports", href: "#risk" },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -321,9 +325,6 @@ export function FeatureDeepDive() {
           })}
         </div>
       </div>
-
-      {/* Visit types — External vs Internal */}
-      <VisitTypes />
 
       {/* Access */}
       <div id="access" className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
@@ -445,6 +446,12 @@ export function FeatureDeepDive() {
           })}
         </div>
       </div>
+
+      {/* Supporting deep-dives after the four pillars */}
+      <VisitTypes />
+      <WaypointSystem />
+      <SmartRoomBooking />
+      <AdminDashboard />
     </section>
   );
 }

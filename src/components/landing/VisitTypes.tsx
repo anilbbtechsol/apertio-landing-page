@@ -6,26 +6,18 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import {
-  BadgeCheck,
   Ban,
   Bell,
   Briefcase,
-  CalendarClock,
   Camera,
   Car,
-  Check,
-  CircleX,
   ClipboardList,
-  Copy,
   CopyX,
   FileText,
   IdCard,
   Link2,
-  LogIn,
-  LogOut,
   Mail,
   MessageCircle,
-  Minus,
   Navigation,
   Phone,
   QrCode,
@@ -99,29 +91,13 @@ const visitTypes: Record<
     ],
     deskCaptures: [{ icon: Camera, text: "Visitor photo" }],
     does: [
-      {
-        icon: ShieldCheck,
-        text: "Host approves, denies or preapproves; watchlist check blocks flagged names",
-      },
-      {
-        icon: CopyX,
-        text: "Same-day duplicate visits are rejected with a link to the existing visit",
-      },
-      {
-        icon: QrCode,
-        text: "Issues a per-guest digital pass + QR via status link, email or WhatsApp",
-      },
-      {
-        icon: Link2,
-        text: "Guest opens a login-less status page (no staff account needed)",
-      },
-      {
-        icon: ScanLine,
-        text: "Gate desk: search the live list, check-in / check-out / deny, print pass",
-      },
-      { icon: Bell, text: "Host gets arrival and departure notifications" },
-      { icon: Navigation, text: "Optional “Guide Me” indoor steps after check-in" },
-      { icon: FileText, text: "Vehicle details included in the daily security PDF" },
+      { icon: ShieldCheck, text: "Host approves or denies. Watchlist blocks flagged names." },
+      { icon: CopyX, text: "Same-day duplicates are rejected." },
+      { icon: QrCode, text: "Sends a pass and QR by link, email, or WhatsApp." },
+      { icon: ScanLine, text: "Gate desk checks people in and prints a pass." },
+      { icon: Bell, text: "Host is notified on arrival and departure." },
+      { icon: Navigation, text: "Optional indoor directions after check-in." },
+      { icon: FileText, text: "Vehicle details go in the daily security PDF." },
     ],
   },
   internal: {
@@ -129,14 +105,9 @@ const visitTypes: Record<
     people: "Members",
     icon: Briefcase,
     summary: "Members are logged with Employee IDs for audit, with no visitor pass.",
-    whoFor: "Employees visiting for team work, with no external guests involved.",
+    whoFor: "",
     bestFor: ["Standups", "Internal reviews", "Department workshops"],
-    hostCaptures: [
-      { icon: UserRound, text: "Name" },
-      { icon: Mail, text: "Email" },
-      { icon: Phone, text: "Phone" },
-      { icon: IdCard, text: "Employee ID", tag: "Required, for audit" },
-    ],
+    hostCaptures: [],
     does: [
       { icon: Users, text: "Treats people as “Members”, not “Guests”" },
       { icon: Ban, text: "No visitor pass, no QR share flow" },
@@ -150,99 +121,39 @@ const visitTypes: Record<
   },
 };
 
-type Step = {
+const internalFeatures: {
   icon: LucideIcon;
-  label: string;
+  title: string;
   text: string;
-  skipped?: boolean;
-};
-
-const lifecycle: Record<
-  VisitType,
-  { title: string; note: string; steps: Step[]; denied: string }
-> = {
-  external: {
-    title: "Full lifecycle",
-    note: "Every step, with pass and gate desk",
-    steps: [
-      {
-        icon: CalendarClock,
-        label: "Expected",
-        text: "Host pre-registers; duplicate and watchlist checks run",
-      },
-      { icon: BadgeCheck, label: "Approved", text: "Host approves; pass + QR issued" },
-      { icon: LogIn, label: "Inside", text: "Checked in at the gate desk; host notified" },
-      { icon: LogOut, label: "Checked out", text: "Desk checks out; host notified" },
-    ],
-    denied: "Host or desk denies, or a watchlist match blocks entry",
-  },
-  internal: {
-    title: "Lighter lifecycle",
-    note: "No pass, no gate-desk step",
-    steps: [
-      {
-        icon: CalendarClock,
-        label: "Expected",
-        text: "Members logged with Employee IDs",
-      },
-      { icon: BadgeCheck, label: "Approved", text: "Same host decision; no pass issued" },
-      { icon: LogIn, label: "Inside", text: "No gate-desk check-in", skipped: true },
-      { icon: LogOut, label: "Checked out", text: "Listed for audit only", skipped: true },
-    ],
-    denied: "Host denies; recorded in the audit trail",
-  },
-};
-
-type Cell =
-  | { kind: "yes"; label?: string }
-  | { kind: "no"; label?: string }
-  | { kind: "text"; label: string }
-  | { kind: "soon" };
-
-const comparison: { label: string; external: Cell; internal: Cell }[] = [
+  soon?: boolean;
+}[] = [
   {
-    label: "Who",
-    external: { kind: "text", label: "Outside guests" },
-    internal: { kind: "text", label: "Employees / members" },
+    icon: Users,
+    title: "Members, not guests",
+    text: "People are treated as Members — the right model for employees on site for team work.",
   },
   {
-    label: "UI label",
-    external: { kind: "text", label: "Guests" },
-    internal: { kind: "text", label: "Members" },
+    icon: Ban,
+    title: "No pass or QR",
+    text: "Skip visitor passes and QR share flows. Entry is logged for audit without guest credentials.",
   },
   {
-    label: "Identity extras",
-    external: { kind: "text", label: "Photo, vehicle" },
-    internal: { kind: "text", label: "Employee ID" },
-  },
-  { label: "Digital QR pass", external: { kind: "yes" }, internal: { kind: "no" } },
-  {
-    label: "Gate-desk check-in",
-    external: { kind: "yes" },
-    internal: { kind: "no", label: "No visitor pass" },
-  },
-  { label: "Watchlist check", external: { kind: "yes" }, internal: { kind: "soon" } },
-  { label: "Host approval", external: { kind: "yes" }, internal: { kind: "yes" } },
-  {
-    label: "Notifications (email / WhatsApp)",
-    external: { kind: "yes" },
-    internal: { kind: "yes" },
+    icon: ShieldCheck,
+    title: "Same host controls",
+    text: "Approve, deny, and notify as usual — with a full audit trail on every decision.",
   },
   {
-    label: "Live tracking",
-    external: { kind: "yes", label: "Full lifecycle" },
-    internal: { kind: "text", label: "Listed only" },
+    icon: IdCard,
+    title: "Employee ID reporting",
+    text: "Visits list member names and Employee IDs so security and HR can report cleanly.",
   },
   {
-    label: "Security PDF",
-    external: { kind: "yes", label: "Included" },
-    internal: { kind: "no", label: "Skipped" },
+    icon: ScanLine,
+    title: "Gate-desk live list",
+    text: "Internal visits appear on the gate-desk live list alongside other presence.",
+    soon: true,
   },
-  { label: "Reports and exports", external: { kind: "yes" }, internal: { kind: "yes" } },
 ];
-
-const blurb =
-  "Toggle External or Internal when creating a visit. External guests get passes, desk check-in, host alerts and live tracking. Internal members are captured with Employee IDs under the same audit trail, with no visitor passes. Reception only sees the guests who need a gate.";
 
 /* Without JS: hide the toggle and show both panels stacked. */
 const noJsCss =
@@ -277,35 +188,6 @@ function TypeChip({ type }: { type: VisitType }) {
       <Icon className="h-3.5 w-3.5" aria-hidden />
       {t.label}
       <span className="font-medium opacity-90">· {t.people}</span>
-    </span>
-  );
-}
-
-function CellValue({ cell, type }: { cell: Cell; type: VisitType }) {
-  if (cell.kind === "soon") return <ComingSoon />;
-  if (cell.kind === "text")
-    return <span className="text-sm text-vt-ink">{cell.label}</span>;
-  if (cell.kind === "yes")
-    return (
-      <span className="inline-flex items-center gap-2 text-sm text-vt-ink">
-        <span
-          className={cn(
-            "flex h-5 w-5 items-center justify-center rounded-full",
-            accent[type].soft,
-            accent[type].text,
-          )}
-        >
-          <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden />
-        </span>
-        {cell.label ?? "Yes"}
-      </span>
-    );
-  return (
-    <span className="inline-flex items-center gap-2 text-sm text-vt-muted">
-      <span className="flex h-5 w-5 items-center justify-center rounded-full border border-dashed border-vt-border">
-        <Minus className="h-3.5 w-3.5" aria-hidden />
-      </span>
-      {cell.label ?? "No"}
     </span>
   );
 }
@@ -506,84 +388,15 @@ function ExternalPassMock() {
   );
 }
 
-function InternalEntryMock() {
-  const members = [
-    { name: "Rahul Desai", id: "EMP-20417" },
-    { name: "Meera Iyer", id: "EMP-18832" },
-  ];
-  return (
-    <figure className="vt-mock relative">
-      <div
-        className="absolute inset-x-6 -bottom-2 h-full rounded-[1rem] border border-vt-border bg-vt-card-soft"
-        aria-hidden
-      />
-      <div className="relative rounded-[1rem] border border-vt-border bg-vt-card p-5 backdrop-blur-md">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-[11px] font-semibold tracking-[0.16em] text-vt-muted uppercase">
-            Member entry
-          </p>
-          <StatusChip type="internal" label="Approved" />
-        </div>
-
-        <p className="font-display mt-4 text-lg font-bold text-vt-ink">Q4 roadmap review</p>
-        <p className="text-sm text-vt-body">Host: Arjun Mehta · Today · 14:00</p>
-
-        <div className="mt-4 space-y-3">
-          {members.map((m) => (
-            <div
-              key={m.id}
-              className="rounded-[0.75rem] border border-vt-border bg-vt-card-soft p-3"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-vt-int-soft text-xs font-bold text-vt-int">
-                  {m.name
-                    .split(" ")
-                    .map((p) => p[0])
-                    .join("")}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-vt-ink">{m.name}</p>
-                  <p className="text-xs text-vt-muted">Member</p>
-                </div>
-              </div>
-              <div className="mt-3">
-                <p className="flex items-center justify-between text-[11px] font-medium text-vt-muted">
-                  <span>
-                    Employee ID <span className="text-vt-int">*</span>
-                  </span>
-                  <span>Required</span>
-                </p>
-                <p className="mt-1 flex items-center gap-2 rounded-lg border border-vt-int/40 px-3 py-2 font-mono text-sm text-vt-ink">
-                  <IdCard className="h-4 w-4 text-vt-int" aria-hidden />
-                  {m.id}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-4 flex items-center gap-2 rounded-[0.75rem] border border-dashed border-vt-border px-3 py-2.5 text-xs text-vt-body">
-          <Ban className="h-4 w-4 shrink-0 text-vt-muted" aria-hidden />
-          No visitor pass · No QR. Logged for audit.
-        </p>
-      </div>
-      <figcaption className="sr-only">
-        Example internal member entry with Employee IDs and no QR code.
-      </figcaption>
-    </figure>
-  );
-}
-
 /* ---------- panel ---------- */
 
-function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
-  const t = visitTypes[type];
-  const a = accent[type];
+function InternalFeaturesPanel({ active }: { active: boolean }) {
+  const t = visitTypes.internal;
   return (
     <div
-      id={`vt-panel-${type}`}
+      id="vt-panel-internal"
       role="tabpanel"
-      aria-labelledby={`vt-tab-${type}`}
+      aria-labelledby="vt-tab-internal"
       tabIndex={0}
       data-vt-panel
       className={cn(
@@ -592,11 +405,89 @@ function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
         !active && "hidden",
       )}
     >
-      <div className="vt-item flex flex-wrap items-center gap-3">
-        <TypeChip type={type} />
-        <h3 className="font-display text-xl font-bold text-vt-ink sm:text-2xl">
-          {t.label} visit
-        </h3>
+      <div className="vt-item flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <TypeChip type="internal" />
+          <p className="mt-2 max-w-xl text-sm text-vt-body sm:text-base">{t.summary}</p>
+        </div>
+        <ul className="vt-item flex flex-wrap gap-2">
+          {t.bestFor.map((tag) => (
+            <li
+              key={tag}
+              className="rounded-full border border-vt-int/25 bg-vt-int-soft px-2.5 py-1 text-xs font-medium text-vt-int"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="vt-item mt-6 flex flex-wrap items-center gap-3 rounded-[0.75rem] border border-dashed border-vt-int/30 bg-vt-int-soft/50 px-4 py-3 text-sm text-vt-body">
+        <Ban className="h-4 w-4 shrink-0 text-vt-int" aria-hidden />
+        <span>
+          <span className="font-semibold text-vt-ink">No visitor pass · No QR</span>
+          {" — "}
+          logged with Employee IDs for audit.
+        </span>
+      </div>
+
+      <div className="vt-item mt-8">
+        <BlockTitle icon={ShieldCheck}>Key features</BlockTitle>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {internalFeatures.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <li
+                key={item.title}
+                className={cn(
+                  "relative flex flex-col rounded-[0.75rem] border border-vt-border bg-vt-card-soft p-5 transition-transform hover:-translate-y-0.5",
+                  i === internalFeatures.length - 1 && "sm:col-span-2 lg:col-span-1",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-vt-int text-white shadow-[0_8px_20px_rgb(79_70_229_/0.28)]">
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </span>
+                  <span className="font-display text-[11px] font-bold tracking-wider text-vt-int/70">
+                    0{i + 1}
+                  </span>
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <h4 className="text-sm font-semibold text-vt-ink">{item.title}</h4>
+                  {item.soon ? <ComingSoon /> : null}
+                </div>
+                <p className="mt-1.5 text-sm leading-relaxed text-vt-body">{item.text}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
+  if (type === "internal") {
+    return <InternalFeaturesPanel active={active} />;
+  }
+
+  const t = visitTypes.external;
+  const a = accent.external;
+  return (
+    <div
+      id="vt-panel-external"
+      role="tabpanel"
+      aria-labelledby="vt-tab-external"
+      tabIndex={0}
+      data-vt-panel
+      className={cn(
+        "rounded-[1rem] border border-vt-border bg-vt-card p-5 backdrop-blur-md sm:p-8",
+        focusRing,
+        !active && "hidden",
+      )}
+    >
+      <div className="vt-item">
+        <TypeChip type="external" />
       </div>
       <p className="vt-item mt-2 text-sm text-vt-body sm:text-base">{t.summary}</p>
 
@@ -625,7 +516,7 @@ function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
             <div className="vt-item">
               <BlockTitle icon={ClipboardList}>What the host captures</BlockTitle>
               <div className="mt-3">
-                <Checklist items={t.hostCaptures} type={type} />
+                <Checklist items={t.hostCaptures} type="external" />
               </div>
               {t.deskCaptures ? (
                 <>
@@ -634,7 +525,7 @@ function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
                     Gate desk captures
                   </p>
                   <div className="mt-2.5">
-                    <Checklist items={t.deskCaptures} type={type} />
+                    <Checklist items={t.deskCaptures} type="external" />
                   </div>
                 </>
               ) : null}
@@ -642,226 +533,17 @@ function DetailPanel({ type, active }: { type: VisitType; active: boolean }) {
           </div>
 
           <div className="vt-item border-t border-vt-border pt-8">
-            <BlockTitle icon={ShieldCheck}>What Apertio does</BlockTitle>
+            <BlockTitle icon={ShieldCheck}>How it works</BlockTitle>
             <div className="mt-4">
-              <Checklist items={t.does} type={type} />
+              <Checklist items={t.does} type="external" />
             </div>
           </div>
         </div>
 
         <div className="vt-item lg:sticky lg:top-28 lg:self-start">
-          {type === "external" ? <ExternalPassMock /> : <InternalEntryMock />}
+          <ExternalPassMock />
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ---------- lifecycle ---------- */
-
-function LifecycleLane({ type, active }: { type: VisitType; active: boolean }) {
-  const lane = lifecycle[type];
-  const a = accent[type];
-  const last = lane.steps.length - 1;
-  return (
-    <div
-      className={cn(
-        "vt-lane rounded-[1rem] border p-5 transition-colors duration-300 sm:p-6",
-        active ? cn(a.borderSoft, "bg-vt-card") : "border-vt-border bg-vt-card-soft",
-      )}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <TypeChip type={type} />
-          <p className="text-sm font-semibold text-vt-ink">{lane.title}</p>
-        </div>
-        <p className="text-xs text-vt-muted">{lane.note}</p>
-      </div>
-
-      <ol className="mt-6 grid md:grid-cols-4">
-        {lane.steps.map((step, i) => {
-          const Icon = step.skipped ? Minus : step.icon;
-          const next = lane.steps[i + 1];
-          const segmentDone = next && !next.skipped && !step.skipped;
-          return (
-            <li
-              key={step.label}
-              className="vt-step relative flex gap-4 pb-7 last:pb-0 md:flex-col md:items-center md:px-3 md:pb-0 md:text-center"
-            >
-              {i < last ? (
-                <>
-                  <span
-                    aria-hidden
-                    className="absolute top-11 -bottom-0.5 left-[17px] w-0 border-l-2 border-dashed border-vt-border md:top-[17px] md:bottom-auto md:left-[calc(50%+26px)] md:h-0 md:w-[calc(100%-52px)] md:border-t-2 md:border-l-0"
-                  />
-                  {segmentDone ? (
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "vt-seg absolute top-11 -bottom-0.5 left-[17px] w-0.5 origin-top md:top-[17px] md:bottom-auto md:left-[calc(50%+26px)] md:h-0.5 md:w-[calc(100%-52px)] md:origin-left",
-                        a.bg,
-                      )}
-                    />
-                  ) : null}
-                </>
-              ) : null}
-
-              <span
-                className={cn(
-                  "vt-node relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
-                  step.skipped
-                    ? "border-2 border-dashed border-vt-border bg-vt-card text-vt-muted"
-                    : cn(a.bg, "text-vt-on-accent"),
-                )}
-              >
-                <Icon className="h-4 w-4" aria-hidden />
-              </span>
-
-              <div className="min-w-0 md:mt-3">
-                <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-vt-ink md:justify-center">
-                  {step.label}
-                  {step.skipped ? (
-                    <span className="rounded-md border border-vt-border px-1.5 py-px text-[11px] font-medium text-vt-muted">
-                      Skipped
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-vt-body">{step.text}</p>
-
-                {step.label === "Approved" ? (
-                  <div className="mt-3 md:flex md:flex-col md:items-center">
-                    <span
-                      aria-hidden
-                      className="mx-auto hidden h-4 w-0 border-l border-dashed border-vt-deny/50 md:block"
-                    />
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-vt-deny/30 bg-vt-deny-soft px-2.5 py-1 text-xs font-semibold text-vt-deny">
-                      <CircleX className="h-3.5 w-3.5" aria-hidden />
-                      Or: Denied
-                    </span>
-                    <p className="mt-1.5 text-xs leading-relaxed text-vt-muted">
-                      {lane.denied}
-                    </p>
-                  </div>
-                ) : null}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
-  );
-}
-
-/* ---------- comparison ---------- */
-
-function ComparisonTable() {
-  return (
-    <>
-      <div className="vt-reveal hidden overflow-hidden rounded-[1rem] border border-vt-border bg-vt-card backdrop-blur-md md:block">
-        <table className="w-full border-collapse text-left">
-          <caption className="sr-only">External versus Internal visits</caption>
-          <thead>
-            <tr className="border-b border-vt-border">
-              <th scope="col" className="w-[34%] px-6 py-4 text-xs font-semibold tracking-[0.14em] text-vt-muted uppercase">
-                Capability
-              </th>
-              <th scope="col" className="px-6 py-4">
-                <TypeChip type="external" />
-              </th>
-              <th scope="col" className="px-6 py-4">
-                <TypeChip type="internal" />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {comparison.map((row) => (
-              <tr key={row.label} className="vt-row border-b border-vt-border last:border-b-0">
-                <th scope="row" className="px-6 py-3.5 text-sm font-medium text-vt-ink">
-                  {row.label}
-                </th>
-                <td className="px-6 py-3.5">
-                  <CellValue cell={row.external} type="external" />
-                </td>
-                <td className="px-6 py-3.5">
-                  <CellValue cell={row.internal} type="internal" />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <ul className="space-y-3 md:hidden" aria-label="External versus Internal visits">
-        {comparison.map((row) => (
-          <li
-            key={row.label}
-            className="vt-row rounded-[0.875rem] border border-vt-border bg-vt-card p-4"
-          >
-            <p className="text-sm font-semibold text-vt-ink">{row.label}</p>
-            <dl className="mt-3 grid grid-cols-2 gap-3">
-              {order.map((type) => (
-                <div key={type}>
-                  <dt className={cn("text-[11px] font-semibold tracking-wide uppercase", accent[type].text)}>
-                    {visitTypes[type].label}
-                  </dt>
-                  <dd className="mt-1">
-                    <CellValue cell={row[type]} type={type} />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-/* ---------- callout ---------- */
-
-function Callout() {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(blurb);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* clipboard unavailable — text stays selectable */
-    }
-  };
-
-  return (
-    <div className="vt-callout flex flex-col gap-4 rounded-[1rem] border border-vt-border bg-vt-card p-5 backdrop-blur-md sm:flex-row sm:items-start sm:justify-between sm:p-6">
-      <div className="flex gap-4">
-        <div className="flex shrink-0 gap-1" aria-hidden>
-          <span className="h-full w-1 rounded-full bg-vt-ext" />
-          <span className="h-full w-1 rounded-full bg-vt-int" />
-        </div>
-        <div>
-          <p className="text-xs font-semibold tracking-[0.14em] text-vt-muted uppercase">
-            In one line
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-vt-ink sm:text-base">{blurb}</p>
-        </div>
-      </div>
-      <motion.button
-        type="button"
-        onClick={copy}
-        whileTap={{ scale: 0.97 }}
-        className={cn(
-          "vt-js-only inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-vt-border px-3.5 py-2 text-xs font-semibold text-vt-ink transition-colors hover:bg-vt-card-soft",
-          focusRing,
-        )}
-      >
-        {copied ? (
-          <Check className="h-3.5 w-3.5" aria-hidden />
-        ) : (
-          <Copy className="h-3.5 w-3.5" aria-hidden />
-        )}
-        <span aria-live="polite">{copied ? "Copied" : "Copy blurb"}</span>
-      </motion.button>
     </div>
   );
 }
@@ -932,56 +614,7 @@ export function VisitTypes() {
         });
       });
 
-      gsap.utils.toArray<HTMLElement>(".vt-lane").forEach((lane) => {
-        gsap.from(lane.querySelectorAll(".vt-node"), {
-          scale: 0.5,
-          opacity: 0,
-          duration: 0.5,
-          ease: "back.out(2)",
-          stagger: 0.12,
-          scrollTrigger: { trigger: lane, start: "top 82%" },
-        });
-      });
-
-      gsap.from(".vt-row", {
-        opacity: 0,
-        x: -14,
-        duration: 0.5,
-        ease: "power2.out",
-        stagger: 0.04,
-        scrollTrigger: { trigger: ".vt-compare", start: "top 80%" },
-      });
-
-      gsap.from(".vt-callout", {
-        opacity: 0,
-        scale: 0.97,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".vt-callout", start: "top 90%" },
-      });
-
       const mm = gsap.matchMedia();
-
-      // Desktop: segments draw horizontally with scroll; pass card drifts slightly.
-      mm.add("(min-width: 768px)", () => {
-        gsap.utils.toArray<HTMLElement>(".vt-lane").forEach((lane) => {
-          gsap.fromTo(
-            lane.querySelectorAll(".vt-seg"),
-            { scaleX: 0 },
-            {
-              scaleX: 1,
-              ease: "none",
-              stagger: 0.5,
-              scrollTrigger: {
-                trigger: lane,
-                start: "top 85%",
-                end: "top 40%",
-                scrub: 0.6,
-              },
-            },
-          );
-        });
-      });
 
       mm.add("(min-width: 1024px)", () => {
         gsap.utils.toArray<HTMLElement>(".vt-mock").forEach((card) => {
@@ -996,26 +629,6 @@ export function VisitTypes() {
                 start: "top bottom",
                 end: "bottom top",
                 scrub: true,
-              },
-            },
-          );
-        });
-      });
-
-      // Mobile: segments draw vertically.
-      mm.add("(max-width: 767px)", () => {
-        gsap.utils.toArray<HTMLElement>(".vt-seg").forEach((seg) => {
-          gsap.fromTo(
-            seg,
-            { scaleY: 0 },
-            {
-              scaleY: 1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: seg,
-                start: "top 85%",
-                end: "bottom 60%",
-                scrub: 0.6,
               },
             },
           );
@@ -1038,7 +651,7 @@ export function VisitTypes() {
         {/* 1. Header */}
         <div className="vt-reveal max-w-2xl">
           <p className="text-xs font-semibold tracking-[0.18em] text-vt-eyebrow uppercase">
-            Visit types
+            Visitors
           </p>
           <h2
             id="vt-title"
@@ -1047,15 +660,15 @@ export function VisitTypes() {
             Two visit types. One access model.
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-vt-body sm:text-base">
-            Every visit starts the same way: a host, a time, the people coming. It
-            then splits by who is arriving. External guests get a digital pass and
-            gate-desk check-in. Internal members are logged for audit, with no
-            visitor-pass overhead.
+            Hosts create a visit once — people, time, and purpose. From there the
+            path depends on who is arriving: external guests receive a digital pass
+            and check in at the gate desk; internal members are recorded for audit
+            without pass or desk overhead.
           </p>
         </div>
 
         {/* 2. Toggle */}
-        <div className="vt-reveal vt-js-only mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+        <div className="vt-reveal vt-js-only mt-10">
           <div
             role="tablist"
             aria-label="Visit type"
@@ -1104,9 +717,6 @@ export function VisitTypes() {
               );
             })}
           </div>
-          <p className="text-sm text-vt-muted" aria-live="polite">
-            {visitTypes[active].summary}
-          </p>
         </div>
 
         {/* 3. Detail panel(s) */}
@@ -1114,43 +724,6 @@ export function VisitTypes() {
           {order.map((type) => (
             <DetailPanel key={type} type={type} active={active === type} />
           ))}
-        </div>
-
-        {/* 4. Lifecycle strip */}
-        <div className="mt-16">
-          <div className="vt-reveal flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h3 className="font-display text-xl font-bold text-vt-ink sm:text-2xl">
-                Visit lifecycle
-              </h3>
-              <p className="mt-1 text-sm text-vt-body">
-                Expected → Approved → Inside → Checked out, with Denied as a branch.
-              </p>
-            </div>
-          </div>
-          <div className="mt-6 space-y-4">
-            {order.map((type) => (
-              <LifecycleLane key={type} type={type} active={active === type} />
-            ))}
-          </div>
-        </div>
-
-        {/* 5. Comparison */}
-        <div className="vt-compare mt-16">
-          <div className="vt-reveal mb-6">
-            <h3 className="font-display text-xl font-bold text-vt-ink sm:text-2xl">
-              Side by side
-            </h3>
-            <p className="mt-1 text-sm text-vt-body">
-              What changes, and what stays the same, between the two visit types.
-            </p>
-          </div>
-          <ComparisonTable />
-        </div>
-
-        {/* 6. Callout */}
-        <div className="mt-10">
-          <Callout />
         </div>
       </div>
     </section>

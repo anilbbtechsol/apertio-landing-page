@@ -14,7 +14,6 @@ import {
   kpiSparkPresence,
   kpiSparkShowRate,
   kpiSparkVisitors,
-  liveDeskRows,
   visitorSeries,
 } from "@/lib/mock-analytics";
 
@@ -180,67 +179,6 @@ export function AnalyticsSection() {
             </LineChart>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="glass-strong mt-6 overflow-hidden rounded-2xl"
-        >
-          <div className="border-b border-slate-200/80 px-4 py-3">
-            <h3 className="text-sm font-semibold text-ink">Gate desk — live list</h3>
-            <p className="text-xs font-medium text-slate-500">
-              Hover a row for secondary actions
-            </p>
-          </div>
-          <ul className="divide-y divide-slate-100">
-            {liveDeskRows.map((row) => (
-              <li
-                key={row.id}
-                className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-white/70"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-medium text-ink">{row.name}</p>
-                    {row.status === "Overdue" ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700">
-                        <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                        Overdue
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-                        {row.status}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-0.5 text-xs font-medium text-slate-500">
-                    {row.id} · Host {row.host} · {row.door}
-                  </p>
-                </div>
-                <div className="inline-flex divide-x overflow-hidden rounded-lg border border-slate-200 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button
-                    type="button"
-                    className="px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                  >
-                    Check-in
-                  </button>
-                  <button
-                    type="button"
-                    className="px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                  >
-                    Print
-                  </button>
-                  <button
-                    type="button"
-                    className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-600"
-                  >
-                    Deny
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
       </div>
     </section>
   );

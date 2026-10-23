@@ -8,12 +8,10 @@ const modules = [
   { label: "Architecture", href: "#workflow" },
 ];
 
-const partners = ["Honeywell", "Suprema", "Spectra", "Spintly"];
-
 export function Footer() {
   return (
     <footer className="relative border-t border-slate-200/70">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:px-8">
         <div>
           <a href="#top" aria-label="Apertio home" className="inline-flex">
             <BrandLogo height={56} />
@@ -37,19 +35,6 @@ export function Footer() {
                 >
                   {item.label}
                 </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
-            Collaborators
-          </p>
-          <ul className="mt-3 space-y-2">
-            {partners.map((name) => (
-              <li key={name} className="text-sm text-slate-600">
-                {name}
               </li>
             ))}
           </ul>

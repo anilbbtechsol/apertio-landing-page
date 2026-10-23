@@ -23,7 +23,6 @@ import {
 import { prefersReducedMotion } from "@/lib/motion";
 import { AdminDashboard } from "@/components/landing/AdminDashboard";
 import { SmartRoomBooking } from "@/components/landing/SmartRoomBooking";
-import { VisitTypes } from "@/components/landing/VisitTypes";
 import { WaypointSystem } from "@/components/landing/WaypointSystem";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -448,7 +447,6 @@ export function FeatureDeepDive() {
       </div>
 
       {/* Supporting deep-dives after the four pillars */}
-      <VisitTypes />
       <WaypointSystem />
       <SmartRoomBooking />
       <AdminDashboard />
